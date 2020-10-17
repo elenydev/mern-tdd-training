@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { withStyles } from "@material-ui/core/styles";
 import Checkbox from "@material-ui/core/Checkbox";
-import { deleteLocalTask } from "../../helpers";
-import { deleteTask } from "../../features/tasks";
-import { useDispatch } from "react-redux";
+import { deleteLocalTask, toggleDone } from "../../helpers";
 import {
   Wrapper,
   TaskName,
@@ -24,30 +22,28 @@ const checkBoxStyles = (theme) => ({
 
 const CustomCheckbox = withStyles(checkBoxStyles)(Checkbox);
 
-const Task = ({ task, id }) => {
-  const { name, taskPriority } = task;
+const Task = ({ task }) => {
+  const { _id, content, prio, status } = task;
 
-  const dispatch = useDispatch();
-  const [checked, setChecked] = useState(false);
-
+  const [checked, setChecked] = useState(status);
   const handleDelete = () => {
-    dispatch(deleteTask(id));
-    deleteLocalTask(id);
+    deleteLocalTask(_id)
   };
 
   return (
     <Wrapper checked={checked}>
-      <TaskName>{name}</TaskName>
-      <TaskPriority>{taskPriority}</TaskPriority>
+      <TaskName>{content}</TaskName>
+      <TaskPriority>{prio}</TaskPriority>
       <TaskStatus>
         <CustomCheckbox
-          checked={checked}
+          checked={status}
           onChange={() => setChecked(!checked)}
+          onClick={() => toggleDone(_id)}
         />
       </TaskStatus>
-      <TaskDelete className='delete'>
-        <DeleteIcon onClick={() => handleDelete()} />
-      </TaskDelete>
+        <TaskDelete className='delete'>
+            <DeleteIcon onClick={handleDelete}/>
+        </TaskDelete>
     </Wrapper>
   );
 };

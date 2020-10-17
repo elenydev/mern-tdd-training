@@ -5,10 +5,7 @@ import Button from "@material-ui/core/Button";
 import Input from "@material-ui/core/Input";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
-import { defaultValues, addLocalTask } from "../../helpers";
-import { addTask } from "../../features/tasks";
-import { useDispatch } from "react-redux";
+import { defaultValues, sendTask } from "../../helpers";
 
 const FormContainer = styled.form`
   display: flex;
@@ -49,36 +46,45 @@ const Form = ({ closeModal }) => {
   const { register, handleSubmit, errors, setError, control, reset } = useForm({
     defaultValues,
   });
-
-  const dispatch = useDispatch();
-
-  const getFormData = (data) => {
-    dispatch(addTask(data));
-    addLocalTask(data);
-    closeModal();
-    reset();
-  };
+  
+  const addTask = (data ,event ) => {
+    event.preventDefault()
+    sendTask(data)
+    closeModal()
+    reset()
+  }
 
   return (
-    <FormContainer onSubmit={handleSubmit(getFormData)}>
+    <FormContainer onSubmit={handleSubmit(addTask)}>
       <label>
         <InputElement
           type='text'
-          name='name'
+          name='content'
           placeholder='Your Task'
           inputRef={register({ required: true })}
           onChange={() => {
-            setError("name", {
+            setError("content", {
               type: "manual",
               message: "You have to provide task",
             });
           }}
         />
       </label>
-      {errors.name && errors.name.type === "required" && (
+      {errors.content && errors.content.type === "required" && (
         <ErrorSpan>Please provide a task</ErrorSpan>
       )}
-
+      <Check>
+        <label>
+          <input
+          type="checkbox"
+          id="status"
+          name='status'
+          value={false}
+          ref={register({required: true})}
+          />
+        </label>
+      </Check>
+      
       <label htmlFor='taskPriority'>Task Priority:</label>
       <Controller
         as={
@@ -89,21 +95,8 @@ const Form = ({ closeModal }) => {
           </SelectElement>
         }
         control={control}
-        name='taskPriority'
+        name='prio'
       />
-
-      <Check>
-        <Controller
-          name='taskStatus'
-          control={control}
-          render={(props) => (
-            <Checkbox
-              onChange={(e) => props.onChange(e.target.checked)}
-              checked={props.value}
-            />
-          )}
-        />
-      </Check>
 
       <Button variant='contained' type='submit' color='primary'>
         Add Task

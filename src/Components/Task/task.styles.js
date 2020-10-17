@@ -61,3 +61,8 @@ export const TaskDelete = styled.p`
     cursor: pointer;
   }
 `;
+
+export const DeleteBtn = styled.button`
+outline: none;
+border: none;
+`

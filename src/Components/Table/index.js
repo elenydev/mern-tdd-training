@@ -8,7 +8,6 @@ const Table = () => {
   const [nameSorting, setNameSorting] = useState(false);
   const [prioritySorting, setPrioritySorting] = useState(false);
   const [statusSorting, setStatusSorting] = useState(false);
-
   const checkSorting = () => {
     if (nameSorting || prioritySorting || statusSorting) return true;
     return false;

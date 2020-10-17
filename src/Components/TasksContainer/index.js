@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchTasks } from "../../helpers";
-import { useSelector } from "react-redux";
-import { tasks } from "../../features/tasks";
+import OpenSocket from 'socket.io-client'
 import Task from "../Task";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
@@ -16,13 +15,13 @@ import {
 } from "./tasksContainer.styles";
 
 const TasksContainer = ({ sorted }) => {
-  const [localTasks, setLocalTasks] = useState(fetchTasks);
-  const currentTasks = useSelector(tasks);
+  const [localTasks, setLocalTasks] = useState([]);
   const [visibleTasks, setVisibleTasks] = useState(5);
   const [startRange, setStartRange] = useState(1);
   const [endRange, setEndRange] = useState(visibleTasks);
-  const ifSorted = sorted();
+  const ifSorted = sorted(false);
   const arrayLength = localTasks ? localTasks.length : 0;
+  const [change, setChange] = useState()
 
   const handleArrayRange = (array, sorted) => {
     if (!sorted) return array.slice(startRange - 1, endRange).sort();
@@ -42,16 +41,25 @@ const TasksContainer = ({ sorted }) => {
   };
 
   useEffect(() => {
-    setLocalTasks(fetchTasks);
+    const fetchData = async () => {
+      const data = await fetchTasks()
+      setLocalTasks(data)
+    }
+    fetchData()
+    const socket = OpenSocket('https://lv-tdd.herokuapp.com/')
+    socket.on('tasks', data => {
+      setChange(data.task)
+    })
+
     if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-  }, [currentTasks, visibleTasks, arrayLength]);
+  }, [ visibleTasks, arrayLength, change]);
 
   return (
     <>
       <Wrapper>
         {arrayLength !== 0 ? (
           handleArrayRange(localTasks, ifSorted).map((task, index) => (
-            <Task task={task} id={index} key={index} />
+            <Task task={task} key={index} />
           ))
         ) : (
           <TasksEmpty>There are no tasks</TasksEmpty>
