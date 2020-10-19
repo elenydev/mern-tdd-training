@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchTasks } from "../../helpers";
-import OpenSocket from 'socket.io-client'
+import OpenSocket from "socket.io-client";
 import Task from "../Task";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
@@ -21,7 +21,7 @@ const TasksContainer = ({ sorted }) => {
   const [endRange, setEndRange] = useState(visibleTasks);
   const ifSorted = sorted(false);
   const arrayLength = localTasks ? localTasks.length : 0;
-  const [change, setChange] = useState()
+  const [change, setChange] = useState();
 
   const handleArrayRange = (array, sorted) => {
     if (!sorted) return array.slice(startRange - 1, endRange).sort();
@@ -41,18 +41,23 @@ const TasksContainer = ({ sorted }) => {
   };
 
   useEffect(() => {
+    let mounted = false;
     const fetchData = async () => {
-      const data = await fetchTasks()
-      setLocalTasks(data)
-    }
-    fetchData()
-    const socket = OpenSocket('https://lv-tdd.herokuapp.com/')
-    socket.on('tasks', data => {
-      setChange(data.task)
-    })
-
+      const data = await fetchTasks();
+      setLocalTasks(data);
+    };
+    fetchData();
+    const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
+    socket.on("tasks", (data) => {
+      setChange(data.task);
+    });
     if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-  }, [ visibleTasks, arrayLength, change]);
+    if( visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null)
+    
+    return () => {
+      mounted = true;
+    };
+  }, [visibleTasks, arrayLength, change]);
 
   return (
     <>

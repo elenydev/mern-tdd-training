@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
 import Form from "../Form";
+import { LogOut } from "../../helpers";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -26,6 +27,7 @@ const ModalContainer = () => {
     setOpen(false);
   };
 
+
   return (
     <>
       <Button
@@ -35,6 +37,14 @@ const ModalContainer = () => {
         onClick={handleOpen}
       >
         Add Task
+      </Button>
+      <Button
+        color='primary'
+        size='large'
+        variant='contained'
+        onClick={() => LogOut()}
+      >
+        Log out
       </Button>
 
       <Modal
