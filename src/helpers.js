@@ -87,7 +87,7 @@ export const createUser =  async (data) => {
 
 export const getUser = async (data) =>{
   try{
-      const response = await fetch('http://localhost:8080/login',{
+      const response = await fetch('https://lv-tdd.herokuapp.com/login',{
         method:'POST',
         body: JSON.stringify(data),
         headers: {
@@ -111,7 +111,7 @@ export const LogOut = async () =>{
     id: JSON.parse(localStorage.getItem('User')).id
   }
     try{
-      await fetch('http://localhost:8080/logout',{
+      await fetch('https://lv-tdd.herokuapp.com/logout',{
         method:'POST',
         body: JSON.stringify(data),
         headers: {
