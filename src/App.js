@@ -18,7 +18,7 @@ const App = () => {
   const history = useHistory();
 
   useEffect(() => {
-    const socket = OpenSocket("http://localhost:8080");
+    const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
     socket.on("user", (data) => {
       if (data.action === "logOut") {
         history.push("/login");
