@@ -66,3 +66,61 @@ export const fetchTasks = async () => {
     console.log(err);
   }
 };
+
+
+export const createUser =  async (data) => {
+  console.log(data)
+    try{
+      const response = await fetch('https://lv-tdd.herokuapp.com/createuser',{
+        method:'POST',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }}
+        )
+      console.log(response)
+    }
+    catch (err) {
+      console.log(err)
+    }
+}
+
+export const getUser = async (data) =>{
+  try{
+      const response = await fetch('http://localhost:8080/login',{
+        method:'POST',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }}
+        )
+      const res = await response.json()
+      const user = {
+        id: res.user[0]._id,
+        email: res.user[0].email,
+      }     
+      localStorage.setItem('User', JSON.stringify(user))
+    }
+    catch (err) {
+      console.log(err)
+    }
+}
+
+export const LogOut = async () =>{
+  const data = {
+    id: JSON.parse(localStorage.getItem('User')).id
+  }
+    try{
+      await fetch('http://localhost:8080/logout',{
+        method:'POST',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }}
+        )
+      localStorage.removeItem('User')
+    }
+    catch (err) {
+      console.log(err)
+    }
+}

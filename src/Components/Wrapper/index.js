@@ -14,6 +14,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 900px;
+  justify-content: center;
 
   ${({ theme }) => theme.mq.md} {
     width: 80%;
