@@ -87,13 +87,13 @@ export const createUser =  async (data) => {
 
 export const getUser = async (data) =>{
   try{
-      const response = await fetch('https://lv-tdd.herokuapp.com/login',{
-        method:'POST',
+      const response = await fetch("https://lv-tdd.herokuapp.com/login", {
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-          "Content-Type": "application/json"
-        }}
-        )
+          "Content-Type": "application/json",
+        },
+      });
       const res = await response.json()
       const user = {
         id: res.user[0]._id,
@@ -111,13 +111,13 @@ export const LogOut = async () =>{
     id: JSON.parse(localStorage.getItem('User')).id
   }
     try{
-      await fetch('https://lv-tdd.herokuapp.com/logout',{
-        method:'POST',
+      await fetch("https://lv-tdd.herokuapp.com/logout", {
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-          "Content-Type": "application/json"
-        }}
-        )
+          "Content-Type": "application/json",
+        },
+      });
       localStorage.removeItem('User')
     }
     catch (err) {

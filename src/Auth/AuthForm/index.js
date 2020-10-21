@@ -68,7 +68,13 @@ const Form = ({ closeModal }) => {
           type='text'
           name='email'
           placeholder='Enter email'
-          inputRef={register({ required: true })}
+          inputRef={register({
+            required: true,
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "invalid email address",
+            },
+          })}
           onChange={() => {
             setError("email", {
               type: "manual",
