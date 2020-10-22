@@ -3,14 +3,9 @@ import Layout from "./Layout";
 import ModalContainer from "./Components/ModalContainer";
 import Wrapper from "./Components/Wrapper";
 import Table from "./Components/Table";
-import AuthForm from './Auth/AuthForm/index'
+import AuthForm from "./Auth/AuthForm/index";
 import OpenSocket from "socket.io-client";
-import {
-  Route,
-  Redirect,
-  useHistory,
-  withRouter,
-} from "react-router-dom";
+import { Route, Redirect, useHistory, withRouter } from "react-router-dom";
 
 const App = () => {
   const [user, setUser] = useState(localStorage.getItem("User") || null);
@@ -25,8 +20,9 @@ const App = () => {
         setUser(null);
       } else if (data.action === "getUser") {
         setLogin(!login);
-        setUser(localStorage.getItem("User"));
-        history.push("/");
+        if (user) {
+          history.push("/");
+        }
       }
     });
   }, [history, login]);

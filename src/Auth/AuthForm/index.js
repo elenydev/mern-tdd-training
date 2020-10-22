@@ -13,11 +13,14 @@ const FormContainer = styled.form`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.colors.lightGray};
+  
+  .MuiInputBase-root{
+    font-size: ${({theme}) => theme.font.size.xs}
+  }
 
   ${({ theme }) => theme.mq.md} {
-    width: 40%;
-    height: 40%;
+    width: 60%;
+    height: 60%;
   }
 `;
 
@@ -51,7 +54,7 @@ const Form = ({ closeModal }) => {
 
   const [action, setAction] = useState("Login");
 
-  const addTask = (data, event) => {
+  const login = (data, event) => {
     event.preventDefault();
     if (action !== "Login") {
       createUser(data);
@@ -62,7 +65,7 @@ const Form = ({ closeModal }) => {
   };
 
   return (
-    <FormContainer onSubmit={handleSubmit(addTask)}>
+    <FormContainer onSubmit={handleSubmit(login)}>
       <label>
         <InputElement
           type='text'
