@@ -1,8 +1,11 @@
+
+
 export const defaultValues = {
   content: "",
   status: "false",
   prio: "Low",
 };
+
 
 export const deleteLocalTask = async (id) => {
   const data = {
@@ -64,44 +67,6 @@ export const fetchTasks = async (id) => {
   }
 };
 
-export const createUser = async (data) => {
-  try {
-    await fetch("https://lv-tdd.herokuapp.com/createuser", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getUser = async (data) => {
-  try {
-    const response = await fetch("https://lv-tdd.herokuapp.com/login", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const res = await response.json();
-
-    if (!res.user) {
-      alert(`User doesn't exist or you provided wrong password, try again`);
-    } else {
-      const user = {
-        id: res.user[0]._id,
-        email: res.user[0].email,
-      };
-      localStorage.setItem("User", JSON.stringify(user));
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 export const LogOut = async () => {
   const data = {

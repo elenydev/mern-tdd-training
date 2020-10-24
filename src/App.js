@@ -25,7 +25,7 @@ const App = () => {
         }
       }
     });
-  }, [history, login]);
+  }, [history, login, user]);
 
   return (
     <>
