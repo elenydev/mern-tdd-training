@@ -20,6 +20,7 @@ const App = () => {
         setUser(null);
       } else if (data.action === "getUser") {
         setLogin(!login);
+        setUser({ _id: data.user._id, email: data.user.email });
         if (user) {
           history.push("/");
         }
