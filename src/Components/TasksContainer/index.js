@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { fetchTasks } from "../../helpers";
 import OpenSocket from "socket.io-client";
 import Task from "../Task";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
@@ -41,25 +40,40 @@ const TasksContainer = ({ sorted }) => {
   };
 
   useEffect(() => {
-    let mounted = false;
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     const fetchData = async () => {
       const fetchUser = JSON.parse(localStorage.getItem("User"));
       const userId = fetchUser ? fetchUser.id : 0;
-      const data = await fetchTasks();
-      const array = data;
-      const userTasks = array.filter((el) => el.creatorId === userId);
-      setLocalTasks(userTasks);
+      try {
+        const response = await fetch(
+          "https://lv-tdd.herokuapp.com/fetchtasks",
+
+          { signal: signal }
+        );
+        const results = await response.json();
+        const array = results;
+        const userTasks = array.filter((el) => el.creatorId === userId);
+        setLocalTasks(userTasks);
+        setChange(!change)
+      } catch (err) {
+      }
     };
+
     fetchData();
+    
     const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
     socket.on("tasks", (data) => {
       setChange(data.task);
     });
+    
     if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null)
-      return () => {
-        mounted = true;
-      };
+    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
+    
+    return () => {
+      abortController.abort();
+    };
   }, [visibleTasks, arrayLength, change]);
 
   return (

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { withStyles } from "@material-ui/core/styles";
 import Checkbox from "@material-ui/core/Checkbox";
+import Modal from "./../EditForm/modal";
 import { deleteLocalTask, toggleDone } from "../../helpers";
 import {
   Wrapper,
   TaskName,
   TaskPriority,
   TaskStatus,
-  TaskDelete,
+  TaskAction,
 } from "./task.styles";
 
 const checkBoxStyles = (theme) => ({
@@ -27,24 +28,29 @@ const Task = ({ task }) => {
 
   const [checked, setChecked] = useState(status);
   const handleDelete = () => {
-    deleteLocalTask(_id)
+    deleteLocalTask(_id);
   };
 
   return (
-    <Wrapper checked={checked}>
-      <TaskName>{content}</TaskName>
-      <TaskPriority>{prio}</TaskPriority>
-      <TaskStatus>
-        <CustomCheckbox
-          checked={status}
-          onChange={() => setChecked(!checked)}
-          onClick={() => toggleDone(_id)}
-        />
-      </TaskStatus>
-        <TaskDelete className='delete'>
-            <DeleteIcon onClick={handleDelete}/>
-        </TaskDelete>
-    </Wrapper>
+    <>
+      <Wrapper checked={checked}>
+        <TaskName>{content}</TaskName>
+        <TaskPriority>{prio}</TaskPriority>
+        <TaskStatus>
+          <CustomCheckbox
+            checked={status}
+            onChange={() => setChecked(!checked)}
+            onClick={() => toggleDone(_id)}
+          />
+        </TaskStatus>
+        <TaskAction className='action'>
+          <Modal task={task}   />
+        </TaskAction>
+        <TaskAction className='action'>
+          <DeleteIcon onClick={handleDelete} />
+        </TaskAction>
+      </Wrapper>
+    </>
   );
 };
 
