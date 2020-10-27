@@ -20,7 +20,9 @@ const TasksContainer = ({ sorted }) => {
   const [endRange, setEndRange] = useState(visibleTasks);
   const ifSorted = sorted(false);
   const arrayLength = localTasks ? localTasks.length : 0;
-  const [socketChange, setSocketChange] = useState(false);
+  const fetchUser = JSON.parse(localStorage.getItem("User"));
+  const userId = fetchUser ? fetchUser.id : 0;
+  
 
   const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
 
@@ -42,27 +44,33 @@ const TasksContainer = ({ sorted }) => {
   };
 
   const fetchData = async () => {
-    const fetchUser = JSON.parse(localStorage.getItem("User"));
-    const userId = fetchUser ? fetchUser.id : 0;
     try {
       const url = "https://lv-tdd.herokuapp.com/fetchtasks";
       const response = await fetch(url);
-      const results = await response.json();
-      const array = results;
-      const userTasks = array.filter((el) => el.creatorId === userId);
-      if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-      if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
-      setLocalTasks(userTasks)
     } catch (error) {
       console.log("error", error);
     }
   };
 
-  useEffect(() => {
-    socket.on("tasks", () => fetchData());
-    
-    socket.off('tasks');
-  }, []);
+
+   useEffect(() => {
+     try {
+       socket.open();
+       socket.emit("tasks");
+       fetchData()
+       socket.on("tasks", (data) => {
+         const userTasks = data.tasks.filter((el) => el.creatorId === userId);
+         if (visibleTasks >= arrayLength ? setStartRange(1) : null);
+         if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
+         setLocalTasks(userTasks);
+       });
+     } catch (error) {
+       console.log(error);
+     }
+     return () => {
+       socket.close();
+     };
+   }, []);
 
 
   return (
