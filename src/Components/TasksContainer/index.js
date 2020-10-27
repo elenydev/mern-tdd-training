@@ -56,7 +56,6 @@ const TasksContainer = ({ sorted }) => {
         const array = results;
         const userTasks = array.filter((el) => el.creatorId === userId);
         setLocalTasks(userTasks);
-        setChange(!change)
       } catch (err) {
       }
     };
