@@ -3,6 +3,9 @@
 # dependencies
 node_modules
 service.js
+.firebasesrc
+firebase.json
+
 /.pnp
 .pnp.js
 

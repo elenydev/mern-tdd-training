@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import Layout from "./Layout";
-import ModalContainer from "./Components/ModalContainer";
 import Wrapper from "./Components/Wrapper";
-import Table from "./Components/Table";
 import AuthForm from "./Auth/AuthForm/index";
 import OpenSocket from "socket.io-client";
 import { Route, Redirect, useHistory, withRouter } from "react-router-dom";
 
+const Table = lazy(() => import("./Components/Table/index"));
+const ModalContainer = lazy(() => import("./Components/ModalContainer/index"));
+ 
 const App = () => {
   const [user, setUser] = useState(localStorage.getItem("User") || null);
   const [login, setLogin] = useState(false);
@@ -30,22 +31,24 @@ const App = () => {
 
   return (
     <>
-      {user ? <Redirect to='/' /> : <Redirect to='/login' />}
-      <Route exact path='/'>
-        <Layout>
-          <Wrapper>
-            <Table />
-            <ModalContainer />
-          </Wrapper>
-        </Layout>
-      </Route>
-      <Route exact path='/login'>
-        <Layout>
-          <Wrapper>
-            <AuthForm />
-          </Wrapper>
-        </Layout>
-      </Route>
+      <Suspense fallback={<div>Loading ...</div>}>
+        {user ? <Redirect to='/' /> : <Redirect to='/login' />}
+        <Route exact path='/'>
+          <Layout>
+            <Wrapper>
+              <Table />
+              <ModalContainer />
+            </Wrapper>
+          </Layout>
+        </Route>
+        <Route exact path='/login'>
+          <Layout>
+            <Wrapper>
+              <AuthForm />
+            </Wrapper>
+          </Layout>
+        </Route>
+      </Suspense>
     </>
   );
 };
