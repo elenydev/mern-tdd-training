@@ -20,7 +20,9 @@ const TasksContainer = ({ sorted }) => {
   const [endRange, setEndRange] = useState(visibleTasks);
   const ifSorted = sorted(false);
   const arrayLength = localTasks ? localTasks.length : 0;
-  const [change, setChange] = useState();
+  const [socketChange, setSocketChange] = useState(false);
+
+  const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
 
   const handleArrayRange = (array, sorted) => {
     if (!sorted) return array.slice(startRange - 1, endRange).sort();
@@ -39,41 +41,29 @@ const TasksContainer = ({ sorted }) => {
     setEndRange(endRange - visibleTasks);
   };
 
+  const fetchData = async () => {
+    const fetchUser = JSON.parse(localStorage.getItem("User"));
+    const userId = fetchUser ? fetchUser.id : 0;
+    try {
+      const url = "https://lv-tdd.herokuapp.com/fetchtasks";
+      const response = await fetch(url);
+      const results = await response.json();
+      const array = results;
+      const userTasks = array.filter((el) => el.creatorId === userId);
+      if (visibleTasks >= arrayLength ? setStartRange(1) : null);
+      if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
+      setLocalTasks(userTasks)
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    const fetchData = async () => {
-      const fetchUser = JSON.parse(localStorage.getItem("User"));
-      const userId = fetchUser ? fetchUser.id : 0;
-      try {
-        const response = await fetch(
-          "https://lv-tdd.herokuapp.com/fetchtasks",
-
-          { signal: signal }
-        );
-        const results = await response.json();
-        const array = results;
-        const userTasks = array.filter((el) => el.creatorId === userId);
-        setLocalTasks(userTasks);
-      } catch (err) {
-      }
-    };
-
-    fetchData();
+    socket.on("tasks", () => fetchData());
     
-    const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
-    socket.on("tasks", (data) => {
-      setChange(data.task);
-    });
-    
-    if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
-    
-    return () => {
-      abortController.abort();
-    };
-  }, [visibleTasks, arrayLength, change]);
+    socket.off('tasks');
+  }, []);
+
 
   return (
     <>

@@ -66,6 +66,9 @@ export const editTask = async (data, creatorId, _id) => {
         "Content-Type": "application/json",
       },
     });
+
+    const json = await response.json();
+    console.log(json);
   } catch (err) {
     console.log(err);
   }
