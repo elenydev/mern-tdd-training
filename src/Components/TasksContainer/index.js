@@ -13,7 +13,22 @@ import {
   Span,
 } from "./tasksContainer.styles";
 
-const TasksContainer = ({ sorted }) => {
+  const fetchData = async () => {
+    let dataArr = [];
+    try {
+      const url = "https://lv-tdd.herokuapp.com/fetchtasks";
+      const response = await fetch(url);
+      const data = await response.json();
+      dataArr = data;
+    } catch (error) {
+      console.log("error", error);
+    }
+    return dataArr;
+  };
+
+
+const TasksContainer =  ({ sorted }) => {
+  
   const [localTasks, setLocalTasks] = useState([]);
   const [visibleTasks, setVisibleTasks] = useState(5);
   const [startRange, setStartRange] = useState(1);
@@ -22,9 +37,9 @@ const TasksContainer = ({ sorted }) => {
   const arrayLength = localTasks ? localTasks.length : 0;
   const fetchUser = JSON.parse(localStorage.getItem("User"));
   const userId = fetchUser ? fetchUser.id : 0;
-  
-
   const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
+  fetchData();
+
 
   const handleArrayRange = (array, sorted) => {
     if (!sorted) return array.slice(startRange - 1, endRange).sort();
@@ -43,35 +58,28 @@ const TasksContainer = ({ sorted }) => {
     setEndRange(endRange - visibleTasks);
   };
 
-  const fetchData = async () => {
-    try {
-      const url = "https://lv-tdd.herokuapp.com/fetchtasks";
-      const response = await fetch(url);
-    } catch (error) {
-      console.log("error", error);
-    }
+  const fetchTasks = (data) => {
+    const userTasks = data.tasks.filter((el) => el.creatorId === userId);
+    if (visibleTasks >= arrayLength ? setStartRange(1) : null);
+    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
+    setLocalTasks(userTasks);
   };
 
 
-   useEffect(() => {
-     try {
-       socket.open();
-       socket.emit("tasks");
-       fetchData()
-       socket.on("tasks", (data) => {
-         const userTasks = data.tasks.filter((el) => el.creatorId === userId);
-         if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-         if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
-         setLocalTasks(userTasks);
-       });
-     } catch (error) {
-       console.log(error);
-     }
-     return () => {
-       socket.close();
-     };
-   }, []);
-
+  useEffect(() => {
+    try {
+      socket.open();
+      socket.emit("tasks");
+      socket.on("tasks", async (data) => {
+        fetchTasks(data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   return (
     <>
