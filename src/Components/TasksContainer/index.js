@@ -43,8 +43,12 @@ const TasksContainer = ({ sorted }) => {
   useEffect(() => {
     let mounted = false;
     const fetchData = async () => {
+      const fetchUser = JSON.parse(localStorage.getItem("User"));
+      const userId = fetchUser ? fetchUser.id : 0;
       const data = await fetchTasks();
-      setLocalTasks(data);
+      const array = data;
+      const userTasks = array.filter((el) => el.creatorId === userId);
+      setLocalTasks(userTasks);
     };
     fetchData();
     const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
@@ -52,11 +56,10 @@ const TasksContainer = ({ sorted }) => {
       setChange(data.task);
     });
     if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-    if( visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null)
-    
-    return () => {
-      mounted = true;
-    };
+    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null)
+      return () => {
+        mounted = true;
+      };
   }, [visibleTasks, arrayLength, change]);
 
   return (

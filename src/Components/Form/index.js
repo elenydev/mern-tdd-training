@@ -49,7 +49,8 @@ const Form = ({ closeModal }) => {
   
   const addTask = (data ,event ) => {
     event.preventDefault()
-    sendTask(data)
+    const userId = JSON.parse(localStorage.getItem("User")).id;
+    sendTask(data, userId);
     closeModal()
     reset()
   }
