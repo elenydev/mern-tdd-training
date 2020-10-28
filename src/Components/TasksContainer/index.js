@@ -70,7 +70,7 @@ const TasksContainer =  ({ sorted }) => {
     try {
       socket.open();
       socket.emit("tasks");
-      socket.on("tasks", async (data) => {
+      socket.on("tasks", (data) => {
         fetchTasks(data);
       });
     } catch (error) {
