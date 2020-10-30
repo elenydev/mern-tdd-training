@@ -1,9 +1,11 @@
+### LIVE https://mern-tdd.web.app/
+
 ## Setup
 
-To run this project, install it locally using npm:
+To run this project locally , install it locally using npm:
 
 - clone/download repository
-- cd ../td-rec
+- cd ../front
 - npm install
 - npm start
 - check the app in [http://localhost:3000]
@@ -11,9 +13,13 @@ To run this project, install it locally using npm:
 ## Used technologies:
 
 - React
-- Redux toolkit
+- React Hook Form
 - Styled Components
 - Material UI
+- Node.js
+- Express.js
+- MongoDB/Mongoose
+- Websockets/socket.io 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
