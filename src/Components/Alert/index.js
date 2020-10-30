@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
     },
   },
+  message: {
+    fontSize: "2rem",
+  },
 }));
 
 const CustomizedSnackbars = ({ message, shouldOpen, variant }) => {
@@ -30,7 +33,11 @@ const CustomizedSnackbars = ({ message, shouldOpen, variant }) => {
   return (
     <div className={classes.root}>
       <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={variant}>
+        <Alert
+          onClose={handleClose}
+          severity={variant}
+          className={classes.message}
+        >
           {message}
         </Alert>
       </Snackbar>

@@ -38,41 +38,6 @@ export const toggleDone = async (id) => {
   }
 };
 
-export const sendTask = async (data, creatorId) => {
-  const newTask = { ...data, creatorId };
-  try {
-    await fetch("https://lv-tdd.herokuapp.com/addtask", {
-      method: "POST",
-      body: JSON.stringify(newTask),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const editTask = async (data, creatorId, _id) => {
-  try {
-    const response = await fetch("https://lv-tdd.herokuapp.com/editTask", {
-      method: "PUT",
-      body: JSON.stringify({
-        data,
-        creatorId,
-        _id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const json = await response.json();
-    console.log(json);
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 
 export const LogOut = async () => {

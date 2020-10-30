@@ -94,7 +94,6 @@ const Form = ({ closeModal }) => {
         },
       });
       const res = await response.json();
-      console.log(res);
       if (res !== null) {
         setCreateErr(false);
         setCreated(true);

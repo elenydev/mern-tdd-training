@@ -12,23 +12,22 @@ import {
   Paragraph,
   Span,
 } from "./tasksContainer.styles";
+import Alert from '../Alert/index'
 
-  const fetchData = async () => {
-    let dataArr = [];
-    try {
-      const url = "https://lv-tdd.herokuapp.com/fetchtasks";
-      const response = await fetch(url);
-      const data = await response.json();
-      dataArr = data;
-    } catch (error) {
-      console.log("error", error);
-    }
-    return dataArr;
-  };
+const fetchData = async () => {
+  let dataArr = [];
+  try {
+    const url = "https://lv-tdd.herokuapp.com/fetchtasks";
+    const response = await fetch(url);
+    const data = await response.json();
+    dataArr = data;
+  } catch (error) {
+    console.log("error", error);
+  }
+  return dataArr;
+};
 
-
-const TasksContainer =  ({ sorted }) => {
-  
+const TasksContainer = ({ sorted }) => {
   const [localTasks, setLocalTasks] = useState([]);
   const [visibleTasks, setVisibleTasks] = useState(5);
   const [startRange, setStartRange] = useState(1);
@@ -37,8 +36,9 @@ const TasksContainer =  ({ sorted }) => {
   const arrayLength = localTasks ? localTasks.length : 0;
   const fetchUser = JSON.parse(localStorage.getItem("User"));
   const userId = fetchUser ? fetchUser.id : 0;
-  const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
-  fetchData();
+ const [message, setMessage] = useState(null);
+ const [variant, setVariant] = useState("");
+
 
 
   const handleArrayRange = (array, sorted) => {
@@ -65,20 +65,16 @@ const TasksContainer =  ({ sorted }) => {
     setLocalTasks(userTasks);
   };
 
-
   useEffect(() => {
     try {
-      socket.open();
-      socket.emit("tasks");
+      const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
+      fetchData();
       socket.on("tasks", (data) => {
         fetchTasks(data);
       });
     } catch (error) {
       console.log(error);
     }
-    return () => {
-      socket.close();
-    };
   }, []);
 
   return (
@@ -86,7 +82,7 @@ const TasksContainer =  ({ sorted }) => {
       <Wrapper>
         {arrayLength !== 0 ? (
           handleArrayRange(localTasks, ifSorted).map((task, index) => (
-            <Task task={task} key={index} />
+            <Task task={task} key={index} setMessage={setMessage} setVariant={setVariant}/>
           ))
         ) : (
           <TasksEmpty>There are no tasks</TasksEmpty>
@@ -128,6 +124,9 @@ const TasksContainer =  ({ sorted }) => {
           </FooterRows>
         </FooterContent>
       </Footer>
+      {message && (
+        <Alert shouldOpen={true} message={message} variant={variant} />
+      )}
     </>
   );
 };

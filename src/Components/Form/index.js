@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useForm, Controller } from "react-hook-form";
 import Button from "@material-ui/core/Button";
 import Input from "@material-ui/core/Input"; 
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { defaultValues, sendTask } from "../../helpers";
+import { defaultValues } from "../../helpers";
+import Alert from "../Alert/index";
 
 const FormContainer = styled.form`
   display: flex;
@@ -46,12 +47,38 @@ const Form = ({ closeModal }) => {
   const { register, handleSubmit, errors, setError, control, reset } = useForm({
     defaultValues,
   });
+
+  const [message, setMessage] = useState(null);
+  const [variant, setVariant] = useState("");
+
+  const sendTask = async (data, creatorId) => {
+    const newTask = { ...data, creatorId };
+    try {
+      const response = await fetch("https://lv-tdd.herokuapp.com/addtask", {
+        method: "POST",
+        body: JSON.stringify(newTask),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const res = await response.json();
+      if (res.message) {
+        setVariant("success");
+        setMessage("Task created");
+      }
+    } catch (err) {
+      setVariant("error");
+      setMessage("Something went wrong");
+    }
+  };
+
+
   
   const addTask = (data ,event ) => {
     event.preventDefault()
     const userId = JSON.parse(localStorage.getItem("User")).id;
     sendTask(data, userId);
-    closeModal()
+    setTimeout(() => closeModal(), 2000);
     reset()
   }
 
@@ -77,15 +104,15 @@ const Form = ({ closeModal }) => {
       <Check>
         <label>
           <input
-          type="checkbox"
-          id="status"
-          name='status'
-          value={false}
-          ref={register({required: true})}
+            type='checkbox'
+            id='status'
+            name='status'
+            value={false}
+            ref={register({ required: true })}
           />
         </label>
       </Check>
-      
+
       <label htmlFor='taskPriority'>Task Priority:</label>
       <Controller
         as={
@@ -102,6 +129,9 @@ const Form = ({ closeModal }) => {
       <Button variant='contained' type='submit' color='primary'>
         Add Task
       </Button>
+      {message && (
+        <Alert variant={variant} message={message} shouldOpen={true} />
+      )}
     </FormContainer>
   );
 };
