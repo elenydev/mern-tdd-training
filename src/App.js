@@ -7,14 +7,14 @@ import { Route, Redirect, useHistory, withRouter } from "react-router-dom";
 
 const Table = lazy(() => import("./Components/Table/index"));
 const ModalContainer = lazy(() => import("./Components/ModalContainer/index"));
- 
+
 const App = () => {
   const [user, setUser] = useState(localStorage.getItem("User") || null);
   const [login, setLogin] = useState(false);
   const history = useHistory();
+  const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
 
   useEffect(() => {
-    const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
     socket.on("user", (data) => {
       if (data.action === "logOut") {
         history.push("/login");
@@ -27,6 +27,10 @@ const App = () => {
         }
       }
     });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [history, login, user]);
 
   return (

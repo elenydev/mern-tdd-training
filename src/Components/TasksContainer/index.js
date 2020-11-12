@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { fetchTasks } from "../../helpers";
 import OpenSocket from "socket.io-client";
 import Task from "../Task";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
@@ -13,6 +12,20 @@ import {
   Paragraph,
   Span,
 } from "./tasksContainer.styles";
+import Alert from '../Alert/index'
+
+const fetchData = async () => {
+  let dataArr = [];
+  try {
+    const url = "https://lv-tdd.herokuapp.com/fetchtasks";
+    const response = await fetch(url);
+    const data = await response.json();
+    dataArr = data;
+  } catch (error) {
+    console.log("error", error);
+  }
+  return dataArr;
+};
 
 const TasksContainer = ({ sorted }) => {
   const [localTasks, setLocalTasks] = useState([]);
@@ -21,7 +34,12 @@ const TasksContainer = ({ sorted }) => {
   const [endRange, setEndRange] = useState(visibleTasks);
   const ifSorted = sorted(false);
   const arrayLength = localTasks ? localTasks.length : 0;
-  const [change, setChange] = useState();
+  const fetchUser = JSON.parse(localStorage.getItem("User"));
+  const userId = fetchUser ? fetchUser.id : 0;
+ const [message, setMessage] = useState(null);
+ const [variant, setVariant] = useState("");
+
+
 
   const handleArrayRange = (array, sorted) => {
     if (!sorted) return array.slice(startRange - 1, endRange).sort();
@@ -40,34 +58,31 @@ const TasksContainer = ({ sorted }) => {
     setEndRange(endRange - visibleTasks);
   };
 
-  useEffect(() => {
-    let mounted = false;
-    const fetchData = async () => {
-      const fetchUser = JSON.parse(localStorage.getItem("User"));
-      const userId = fetchUser ? fetchUser.id : 0;
-      const data = await fetchTasks();
-      const array = data;
-      const userTasks = array.filter((el) => el.creatorId === userId);
-      setLocalTasks(userTasks);
-    };
-    fetchData();
-    const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
-    socket.on("tasks", (data) => {
-      setChange(data.task);
-    });
+  const fetchTasks = (data) => {
+    const userTasks = data.tasks.filter((el) => el.creatorId === userId);
     if (visibleTasks >= arrayLength ? setStartRange(1) : null);
-    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null)
-      return () => {
-        mounted = true;
-      };
-  }, [visibleTasks, arrayLength, change]);
+    if (visibleTasks >= arrayLength ? setEndRange(visibleTasks) : null);
+    setLocalTasks(userTasks);
+  };
+
+  useEffect(() => {
+    try {
+      const socket = OpenSocket("https://lv-tdd.herokuapp.com/");
+      fetchData();
+      socket.on("tasks", (data) => {
+        fetchTasks(data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return (
     <>
       <Wrapper>
         {arrayLength !== 0 ? (
           handleArrayRange(localTasks, ifSorted).map((task, index) => (
-            <Task task={task} key={index} />
+            <Task task={task} key={index} setMessage={setMessage} setVariant={setVariant}/>
           ))
         ) : (
           <TasksEmpty>There are no tasks</TasksEmpty>
@@ -109,6 +124,9 @@ const TasksContainer = ({ sorted }) => {
           </FooterRows>
         </FooterContent>
       </Footer>
+      {message && (
+        <Alert shouldOpen={true} message={message} variant={variant} />
+      )}
     </>
   );
 };

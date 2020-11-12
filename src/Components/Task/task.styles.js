@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 3fr repeat(2, 1fr) 0.5fr;
+  grid-template-columns: 2fr repeat(2, 1fr) 0.5fr 0.5fr;
   grid-template-rows: 1fr;
   grid-column-gap: 5px;
   width: 100%;
@@ -21,7 +21,7 @@ export const Wrapper = styled.div`
 
   &:hover,
   &:active {
-    .delete {
+    .action {
       display: flex;
     }
   }
@@ -51,10 +51,11 @@ export const TaskStatus = styled.p`
   cursor: pointer;
 `;
 
-export const TaskDelete = styled.p`
+export const TaskAction = styled.p`
   display: none;
   align-items: center;
   justify-content: center;
+  transition: 0.2s linear;
 
   .MuiSvgIcon-root {
     font-size: 2em;

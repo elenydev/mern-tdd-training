@@ -14,9 +14,9 @@ const FormContainer = styled.form`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  
-  .MuiInputBase-root{
-    font-size: ${({theme}) => theme.font.size.xs}
+
+  .MuiInputBase-root {
+    font-size: ${({ theme }) => theme.font.size.xs};
   }
 
   ${({ theme }) => theme.mq.md} {
@@ -36,14 +36,13 @@ const ErrorSpan = styled.span`
   font-size: ${({ theme }) => theme.font.size.xxs};
 `;
 
-
 const ButtonsBox = styled.div`
   display: flex;
   padding: 10px;
   align-items: center;
   justify-content: space-between;
 
-  & > button{
+  & > button {
     margin: 5px;
   }
 `;
@@ -95,7 +94,6 @@ const Form = ({ closeModal }) => {
         },
       });
       const res = await response.json();
-      console.log(res);
       if (res !== null) {
         setCreateErr(false);
         setCreated(true);
@@ -187,14 +185,18 @@ const Form = ({ closeModal }) => {
         <Alert
           shouldOpen={true}
           message="User doesn't exist or you provided wrong email or password"
-          variant="error"
+          variant='error'
         />
       )}
       {createErr === true && (
-        <Alert shouldOpen={true} message='User already exist' variant="error" />
+        <Alert shouldOpen={true} message='User already exist' variant='error' />
       )}
       {created === true && (
-        <Alert shouldOpen={true} message='User successfully craeated!' variant="success" />
+        <Alert
+          shouldOpen={true}
+          message='User successfully craeated!'
+          variant='success'
+        />
       )}
     </>
   );
